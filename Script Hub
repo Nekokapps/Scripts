@@ -1,5 +1,3 @@
-
-
 local itemsFolder = game:GetService("Workspace").Map.Items.SpawnedItems
 local npcFolder = game:GetService("Workspace").NPCs.Friendly
 
@@ -139,7 +137,6 @@ MultiFarm:NewToggle("Farm", "Collects all items on the map", function(state)
             print(v)
             if v:IsA("Part") or v:IsA("MeshPart") or v:IsA("Mesh") then
                 tp(v)
-                char.Humanoid.Jump = true
                 wait(.5)
                 local prox = v:WaitForChild("ProximityPrompt", .5)
                 fireproximityprompt(prox)
@@ -147,7 +144,6 @@ MultiFarm:NewToggle("Farm", "Collects all items on the map", function(state)
                 print("Fired")
             elseif v:FindFirstChild("Handle") then
                 tp(v.Handle)
-                char.Humanoid.Jump = true
                 wait(.5)
                 local prox = v.Handle:WaitForChild("ProximityPrompt", .5)
                 fireproximityprompt(prox)
