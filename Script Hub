@@ -1,0 +1,162 @@
+
+
+local itemsFolder = game:GetService("Workspace").Map.Items.SpawnedItems
+local npcFolder = game:GetService("Workspace").NPCs.Friendly
+
+sethiddenproperty(game.Lighting, "Technology", Enum.Technology.Legacy)
+
+local me = game.Players.LocalPlayer
+char = me.Character
+HRP = char.HumanoidRootPart
+local function tp(arg1)
+    HRP.CFrame = arg1.CFrame   
+end
+
+-- Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local colours = {
+    SchemeColor = Color3.fromRGB(180, 30, 30),
+    Background = Color3.fromRGB(20, 20, 20),
+    Header = Color3.fromRGB(15, 15, 15),
+    TextColor = Color3.fromRGB(255, 255, 255),
+    ElementColor = Color3.fromRGB(20, 20, 20)
+}
+
+local Window = Library.CreateLib("Neko's Scripts", colours)
+
+-- Character related
+
+    -- Player
+
+    -- Teleporting
+local Teleport = Window:NewTab("Teleport")
+local NPCTP = Teleport:NewSection("NPC Teleport")
+local PlayerTP = Teleport:NewSection("Player Teleport")
+
+local npcTP
+local playerTP
+
+local npcList = {}
+
+
+for _, npc in pairs(npcFolder:GetChildren()) do
+    if npc:FindFirstChild("HumanoidRootPart") then
+        table.insert(npcList, tostring(npc.Name))
+    end
+end
+
+NPCTP:NewDropdown("Select NPC", "Select the NPC to teleport to", npcList, function(currentOption)
+    npcTP = currentOption
+end)
+
+local playerListOld = {}
+local playerList = {}
+
+for _, player in pairs(game.Players:GetPlayers()) do
+    table.insert(playerList, tostring(player.Name))
+end
+PlayerTP:NewDropdown("Select Player", "Select which player to teleport to", playerList, function(currentOption)
+    playerTP = game.Workspace:FindFirstChild(currentOption)
+end)
+
+NPCTP:NewButton("Teleport", "Teleport to selected NPC", function()
+    local npc = npcFolder:FindFirstChild(npcTP).HumanoidRootPart
+    tp(npc)
+end)
+
+PlayerTP:NewButton("Teleport", "Teleport to selected Player", function()
+    local player = playerTP.HumanoidRootPart
+    tp(player)
+end)
+
+-- Game related
+
+    -- Items
+local Items = Window:NewTab("Items")
+
+local SingleFarm = Items:NewSection("Single Item")
+local MultiFarm = Items:NewSection("Multiple Items")
+
+local singleItem
+
+local items = {
+    "Arrow",
+    "Requiem Arrow",
+    "Locacaca",
+    "Stone Mask",
+    "Steel Ball",
+    "Heart of the Saint's Corpse",
+    "Left Arm of the Saint's Corpse",
+    "Eye of the Saint's Corpse",
+    "Skull of the Saint's Corpse",
+    "Ribcage of the Saint's Corpse",
+    "Left Leg of the Saint's Corpse",
+    "Right Leg of the Saint's Corpse",
+    "Right Arm of the Saint's Corpse",
+    "Cash",
+    "Coin"
+}
+
+        -- Single Farm
+SingleFarm:NewDropdown("Select Item", "Select the item you want to find", items, function(currentOption)
+    singleItem = currentOption
+end)
+
+SingleFarm:NewToggle("Farm", "Collects selected item from dropdown above", function(state)
+    if state then
+        for i, v in pairs(itemsFolder:GetChildren()) do
+            if v.IsA("Part") or v:IsA("Meshpart") or v:IsA("Mesh") then
+                if v.Name == singleItem then
+                    tp(v)
+                    char.Humanoid.Jump = true
+                    wait(.5)
+                    local prox = v:WaitForChild("ProximityPrompt", .5)
+                    fireproximityprompt(prox)
+                    wait()
+                    print("Fired")
+                end
+            elseif v:FindFirstChild("Handle") then
+                if v.Name == singleItem then
+                    tp(v.Handle)
+                    char.Humanoid.Jump = true
+                    wait(.5)
+                    local prox = v.Handle:WaitForChild("ProximityPrompt", .5)
+                    fireproximityprompt(prox)
+                    wait()
+                    print("Fired")
+                end
+            end
+        end
+    end
+end)
+
+        -- Multifarm
+
+MultiFarm:NewToggle("Farm", "Collects all items on the map", function(state)
+    if state then
+        for i, v in pairs(itemsFolder:GetChildren()) do
+        if table.find(items, v.Name) then
+            print(v)
+            if v:IsA("Part") or v:IsA("MeshPart") or v:IsA("Mesh") then
+                tp(v)
+                char.Humanoid.Jump = true
+                wait(.5)
+                local prox = v:WaitForChild("ProximityPrompt", .5)
+                fireproximityprompt(prox)
+                wait()
+                print("Fired")
+            elseif v:FindFirstChild("Handle") then
+                tp(v.Handle)
+                char.Humanoid.Jump = true
+                wait(.5)
+                local prox = v.Handle:WaitForChild("ProximityPrompt", .5)
+                fireproximityprompt(prox)
+                wait()
+                print("Fired")
+            end
+        end
+    end
+    else
+        
+    end
+end)
